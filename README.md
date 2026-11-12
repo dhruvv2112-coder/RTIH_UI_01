@@ -5,6 +5,14 @@ Command-centre surveillance dashboard for **AP Godavari Pushkaralu 2027, Rajamah
 
 ![Live command mode](docs/screenshots/01-live-command.png)
 
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fdhruvv2112-coder%2FRTIH_UI_01&project-name=rtih-ui-01&repository-name=RTIH_UI_01)
+
+- **Figma (design system + screens):** https://www.figma.com/design/E9mb4OwUnAc0UUkM5w2lVU
+  — pages: Cover · Foundations (colour variables with Light/Night modes, text & effect styles) · Components
+  (Button, Chip, Status dot, Tab, Zone chip, Toast, Emergency action, Alert card, Camera card, KPI card,
+  Staff option, GIS map) · Screens — Desktop LG (Live Command, Night theme, Map focus) · States & Modals
+  (Dispatch dialog, Emergency protocol) · Responsive (Tablet, Phone redirect, breakpoints)
+
 > **Status:** interactive UI prototype. Every data source in brief §10 (S1/S2/S3 WebSockets, REST, HLS) is
 > simulated in the browser so operators and reviewers can try every flow. Cameras, staff, alerts and
 > counts are illustrative, not real.
