@@ -103,10 +103,13 @@ export async function createMap3D(container, { theme = 'light', onAlert, onCamer
     container, style: STYLES[theme] || STYLES.light, ...VIEW,
     maxPitch: 78, attributionControl: { compact: true }, fadeDuration: 150, dragRotate: true,
   });
+  // maplibre-gl.css sets .maplibregl-map { position: relative }; if that sheet wins the cascade
+  // (or an older views.css is cached) the container collapses to 0 px. Inline styles always win.
+  Object.assign(container.style, { position: 'absolute', inset: '0' });
   let styleFailed = false;
   map.on('error', (e) => {
     const msg = String(e?.error?.message || '');
-    if (!styleFailed && /style|404|Failed to fetch/i.test(msg) && !map.isStyleLoaded()) { styleFailed = true; map.setStyle(STYLES.fallback); }
+    if (!styleFailed && /style|404|Failed to fetch/i.test(msg) && !map.isStyleLoaded()) { styleFailed = true; map.setStyle(STYLES.fallback, { diff: false }); }
   });
   await new Promise((resolve, reject) => {
     const t = setTimeout(() => reject(new Error('Map tiles timed out — check the internet connection')), 15000);
@@ -257,7 +260,7 @@ export async function createMap3D(container, { theme = 'light', onAlert, onCamer
     zoomOut: () => map.zoomOut(),
     reset: () => map.flyTo({ ...VIEW, duration: 1200 }),
     setOrbit(on) { orbit = on ? 1 : 0; if (on) spin(); else map.stop(); },
-    setTheme(t) { theme = t; styleFailed = false; map.setStyle(STYLES[t] || STYLES.light); },
+    setTheme(t) { theme = t; styleFailed = false; map.setStyle(STYLES[t] || STYLES.light, { diff: false }); },
     flyTo: (pos, zoom = 16.4) => map.flyTo({ center: toLngLat(pos), zoom, duration: 1200 }),
     resize: () => map.resize(),
     destroy() { clearInterval(tick); unsub?.(); orbit = 0; map.remove(); },
