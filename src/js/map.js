@@ -5,6 +5,7 @@ import { state, subscribe, openAlerts, touch, presetCams } from './store.js';
 import { smoothPath, polyPath, heatColour, esc, toMetres, densityLabel, num, $ } from './util.js';
 import { icon } from './icons.js';
 import { registerFeed } from './camera-sim.js';
+import { createMap3D } from './map3d.js';
 
 const VB = { w: 1200, h: 720 };
 const UNIT_M = 4.2; // metres per map unit
@@ -101,11 +102,17 @@ export function createMap(root, { compact = false } = {}) {
         <rect class="l-select" hidden/>
       </g>
     </svg>
+    <div class="gis__map3d" aria-label="3D map of the Pushkaralu riverfront" hidden></div>
+    <div class="gis__3d-status" role="status" hidden></div>
     <div class="gis__layers" role="group" aria-label="Map layers">
       ${compact ? '' : `<span class="gis__layers-label">${icon('layers', 16)}</span>`}
       ${LAYERS.map(([k, l]) => `<button class="chip chip--sm ${compact && !['cctv', 'radar', 'staff', 'privacy'].includes(k) ? 'is-optional' : ''}" data-layer="${k}" aria-pressed="false">${l}</button>`).join('')}
     </div>
     <button class="gis__compass" aria-label="Reset bearing and fit all zones" title="Fit all zones">${icon('navigation', 18)}<span>N</span></button>
+    <div class="gis__view3d" role="group" aria-label="Map view">
+      <button class="gis__btn3d" data-act="map3d" aria-pressed="false" title="3D map with real streets and buildings (needs internet)">3D</button>
+      <button class="gis__orbit" data-act="orbit" aria-pressed="false" aria-label="Orbit the view" title="Slowly orbit the view" hidden>${icon('refresh', 16)}</button>
+    </div>
     <div class="gis__zoom" role="group" aria-label="Zoom">
       <button aria-label="Zoom in" data-zoom="in">${icon('plus', 18)}</button>
       <button aria-label="Zoom out" data-zoom="out">${icon('minus', 18)}</button>
@@ -493,6 +500,10 @@ export function createMap(root, { compact = false } = {}) {
   root.addEventListener('click', (e) => {
     const b = e.target.closest('button');
     if (!b || !root.contains(b)) return;
+    if (b.dataset.act === 'map3d') { toggle3D(); return; }
+    if (b.dataset.act === 'orbit') { const on = b.getAttribute('aria-pressed') !== 'true'; b.setAttribute('aria-pressed', String(on)); m3?.setOrbit(on); return; }
+    if (m3 && b.dataset.zoom) { b.dataset.zoom === 'in' ? m3.zoomIn() : m3.zoomOut(); return; }
+    if (m3 && b.classList.contains('gis__compass')) { m3.reset(); return; }
     if (b.dataset.layer) {
       state.mapLayers[b.dataset.layer] = !state.mapLayers[b.dataset.layer];
       touch('mapLayers');
@@ -539,8 +550,57 @@ export function createMap(root, { compact = false } = {}) {
   subscribe('staff', drawStaff);
   subscribe(['cameras', 'preset', 'customGroup'], () => { drawCams(); drawCCTV(); });
 
+  /* ----- 3D view (MapLibre, online) ----- */
+  let m3 = null, m3Loading = false;
+  const box3d = $('.gis__map3d', root), status3d = $('.gis__3d-status', root);
+  const btn3d = $('.gis__btn3d', root), orbitBtn = $('.gis__orbit', root);
+  function set3DUI(on) {
+    root.classList.toggle('is-3d', on);
+    box3d.hidden = !on;
+    btn3d.setAttribute('aria-pressed', String(on));
+    btn3d.classList.toggle('is-active', on);
+    orbitBtn.hidden = !on;
+    if (!on) orbitBtn.setAttribute('aria-pressed', 'false');
+  }
+  async function toggle3D(force) {
+    const want = force ?? !m3;
+    if (m3Loading) return;
+    if (!want) {
+      m3?.destroy(); m3 = null; set3DUI(false);
+      try { localStorage.setItem('gc-map3d', '0'); } catch { /* storage off */ }
+      return;
+    }
+    closePopup();
+    m3Loading = true;
+    set3DUI(true);
+    status3d.hidden = false;
+    status3d.textContent = 'Loading 3D map…';
+    try {
+      m3 = await createMap3D(box3d, {
+        theme: state.theme,
+        onAlert: (id) => root.dispatchEvent(new CustomEvent('gc:focus-alert', { bubbles: true, detail: { id } })),
+        onCamera: (id) => window.__gc?.actions.openCam(id),
+        onZone: (id) => zoneSheet(ZONES.find((z) => z.id === id)),
+      });
+      try { localStorage.setItem('gc-map3d', '1'); } catch { /* storage off */ }
+    } catch (err) {
+      set3DUI(false);
+      box3d.innerHTML = '';
+      try { localStorage.setItem('gc-map3d', '0'); } catch { /* storage off */ }
+      if (force === undefined) root.dispatchEvent(new CustomEvent('gc:toast', { bubbles: true, detail: { type: 'warning', title: '3D map unavailable', desc: `${err?.message || err}. Showing the offline map.` } }));
+    } finally {
+      m3Loading = false;
+      status3d.hidden = true;
+    }
+  }
+  if (typeof ResizeObserver === 'function') new ResizeObserver(() => m3?.resize()).observe(root);
+  try { if (localStorage.getItem('gc-map3d') === '1' && navigator.onLine !== false) toggle3D(true); } catch { /* storage off */ }
+
   return {
+    toggle3D,
+    get is3D() { return !!m3; },
     focusOn(at, zoom = 2.2) {
+      if (m3) { m3.flyTo(at, 15 + zoom * 0.6); return; }
       userMoved = true;
       const nw = VB.w / zoom, nh = nw * aspect();
       Object.assign(vb, { x: at[0] - nw / 2, y: at[1] - nh / 2, w: nw, h: nh });

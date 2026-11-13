@@ -8,6 +8,7 @@
 //                 emergency protocol on/off, PA advisory                  → POST /api/broadcast (pilgrims)
 import { state, subscribe, touch } from './store.js';
 import { toast, chime } from './ui.js';
+import { toLngLat } from './map3d.js';
 
 const FIELD_NAME = 'Ramesh Kumar';
 const isField = (name) => typeof name === 'string' && name.startsWith(FIELD_NAME);
@@ -136,7 +137,7 @@ function onAlerts() {
       sentToField.add(a.id);
       api('/api/dispatch', {
         alertId: a.id, type: a.type, severity: a.severity, zone: a.zone, title: a.title, desc: a.desc,
-        suggestion: a.suggestion, lat: a.geo?.lat, lng: a.geo?.lng, by: state.user.name,
+        suggestion: a.suggestion, lat: a.geo?.lat ?? (a.location ? toLngLat(a.location)[1] : undefined), lng: a.geo?.lng ?? (a.location ? toLngLat(a.location)[0] : undefined), by: state.user.name,
       }).then((r) => r.ok && toast({ type: 'success', title: 'Sent to Field app', desc: `${FIELD_NAME}'s phone is ringing — ${r.data.id}`, life: 5000 }));
     }
     if (a.hub && prev) api(`/api/alerts/${encodeURIComponent(a.id)}`, { state: a.state, assignee: a.assignee, severity: a.severity }).catch(() => {});
