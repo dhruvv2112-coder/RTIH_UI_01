@@ -255,6 +255,7 @@ export const ALERT_TYPES = {
   fire: { icon: 'flame', label: 'Smoke detected' },
   drowning: { icon: 'life-buoy', label: 'Deep-water entry' },
   gate: { icon: 'door-open', label: 'Gate overflow' },
+  sos: { icon: 'siren', label: 'SOS from app' },
 };
 
 const min = 60 * 1000;

@@ -16,6 +16,7 @@ import { mountAnalytics } from './analytics.js';
 import { mountReplay } from './replay.js';
 import { toast, closeDropdown, closeTopModal, hasModal, dropdown, chime } from './ui.js';
 import { setFeedsPaused } from './camera-sim.js';
+import './live.js';
 
 const VIEWS = ['live', 'replay', 'analytics', 'map'];
 const VIEW_META = {
@@ -228,6 +229,7 @@ document.addEventListener('click', (e) => {
   const b = e.target.closest('[data-act]');
   if (!b) return;
   if (b.dataset.act === 'map-full') actions.view('map');
+  if (b.dataset.act === 'map-3d') import('./map3d-view.js').then(async (m) => { const on = await m.toggle3D($('#full-map')); b.setAttribute('aria-pressed', String(on)); });
   if (b.dataset.act === 'open-cam' && b.dataset.cam) actions.openCam(b.dataset.cam);
   if (b.dataset.act === 'call-staff') { const s = state.staff.find((x) => x.id === b.dataset.staff); toast({ type: 'info', title: `Calling ${s.name}`, desc: `Radio CH-${s.zone}${s.id.slice(-2)} · ${s.phone}` }); }
   if (b.dataset.act === 'dispatch-staff') { const s = state.staff.find((x) => x.id === b.dataset.staff); openDispatch(null, { at: s.pos }); }
@@ -245,6 +247,7 @@ document.addEventListener('keydown', (e) => {
     if (closeDropdown()) return;
     if (closeTopModal()) return;
     if (typing) { t.blur(); return; }
+    if ($('#full-map')?.dataset.m3d === 'on') { import('./map3d-view.js').then((m) => m.close3D()); return; }
     if (cams.closeEnlarged()) return;
     if (breakpoint() === 'md' && state.railOpen) { closeRail(); return; }
     if (state.view !== 'live') { actions.view('live'); return; }

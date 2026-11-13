@@ -333,3 +333,6 @@ path.chart__line.zl-A, path.chart__line.zl-B, path.chart__line.zl-C, path.chart_
 .rp__ev .t-mono { color: var(--color-text-secondary); padding-top: 2px; }
 .rp__ev-body { display: grid; gap: 2px; min-width: 0; }
 .gis--compact .m-cam:not(.is-preset):not(.is-offline) { display: none; }
+.gis__3d { position: absolute; top: 56px; right: 12px; height: 36px; padding: 0 12px; display: inline-flex; align-items: center; gap: 6px; border-radius: var(--radius-full); background: var(--color-bg-primary); box-shadow: var(--shadow-md); color: var(--color-text-primary); font: 600 12px var(--font-sans); }
+.gis__3d:hover { background: var(--color-bg-secondary, #F1F5F9); }
+.gis__3d[aria-pressed=true] { background: var(--color-brand-primary, #1E3A5F); color: #fff; }

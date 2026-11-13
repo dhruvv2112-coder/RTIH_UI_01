@@ -1,9 +1,9 @@
 {
   "name": "Pushkaralu Command — Godavari Pushkaralu 2027",
   "short_name": "Pushkaralu Command",
-  "start_url": "/",
+  "start_url": "../",
   "display": "fullscreen",
   "background_color": "#F5F7FA",
   "theme_color": "#1E3A5F",
-  "icons": [{ "src": "/public/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+  "icons": [{ "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
 }

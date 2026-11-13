@@ -71,4 +71,7 @@ function emit(keys) {
   fns.forEach((f) => f(state, keys));
 }
 
+/** Optional integrations (live.js fills these when the suite server is present). */
+export const hooks = {};
+
 export const openAlerts = () => state.alerts.filter((a) => a.state !== 'resolved');

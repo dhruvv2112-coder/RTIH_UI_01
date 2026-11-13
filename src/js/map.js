@@ -106,6 +106,7 @@ export function createMap(root, { compact = false } = {}) {
       ${LAYERS.map(([k, l]) => `<button class="chip chip--sm ${compact && !['cctv', 'radar', 'staff', 'privacy'].includes(k) ? 'is-optional' : ''}" data-layer="${k}" aria-pressed="false">${l}</button>`).join('')}
     </div>
     <button class="gis__compass" aria-label="Reset bearing and fit all zones" title="Fit all zones">${icon('navigation', 18)}<span>N</span></button>
+    ${compact ? '' : `<button class="gis__3d" data-act="map-3d" aria-pressed="false" title="3D view on real buildings (needs internet)">${icon('layers', 16)}<span>3D</span></button>`}
     <div class="gis__zoom" role="group" aria-label="Zoom">
       <button aria-label="Zoom in" data-zoom="in">${icon('plus', 18)}</button>
       <button aria-label="Zoom out" data-zoom="out">${icon('minus', 18)}</button>

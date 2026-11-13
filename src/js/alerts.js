@@ -75,7 +75,7 @@ export function mountAlertQueue(root, actions) {
         <span class="alert__icon" title="${t.label}">${icon(t.icon, 20)}</span>
         <div class="alert__body">
           <h3 class="alert__title">${esc(a.title)}</h3>
-          <p class="alert__desc">${dispatched ? `<span class="alert__dispatched">${icon('send', 14)}Dispatched to ${esc(a.assignee)}<span class="dots" aria-hidden="true"></span></span>` : esc(a.desc)}</p>
+          <p class="alert__desc">${dispatched ? `<span class="alert__dispatched">${icon('send', 14)}Dispatched to ${esc(a.assignee)}${a.progress ? ` · ${esc(a.progress)}` : ''}<span class="dots" aria-hidden="true"></span></span>` : esc(a.desc)}</p>
           <p class="alert__meta"><span class="sev-tag sev-tag--${a.severity}">${sevShape(a.severity)}${SEV_LABEL[a.severity]}</span><span class="t-mono">${timeIST(a.ts)} IST</span><span class="alert__rel" data-ts="${a.ts}">${relTime(a.ts)}</span>${a.state === 'acknowledged' ? `<span class="alert__ack">${icon('check', 12)}Acknowledged</span>` : ''}</p>
         </div>
         <div class="alert__actions">

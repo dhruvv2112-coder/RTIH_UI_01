@@ -1,7 +1,8 @@
 // Dispatch dialog (§5.6): staff radio list sorted by distance, auto-selects
 // the nearest available person, priority, instruction, loading state.
 import { icon } from './icons.js';
-import { state, touch } from './store.js';
+import { state, touch, hooks } from './store.js';
+import { fieldAppBadge } from './live.js';
 import { ALERT_TYPES, ROLE_COLOURS } from './data.js';
 import { esc, toMetres, $, $$ } from './util.js';
 import { openModal, toast, chime } from './ui.js';
@@ -39,7 +40,7 @@ export function openDispatch(alert, { at = null, onDone } = {}) {
               <span class="staff-opt__radio" aria-hidden="true"></span>
               <span class="avatar avatar--sm" style="--role:${ROLE_COLOURS[s.role]}">${s.name.split(' ').map((p) => p[0]).join('').slice(0, 2)}</span>
               <span class="staff-opt__main">
-                <span class="t-body-strong">${esc(s.name)} <span class="muted t-body">— ${s.role}, ${s.dist} m</span></span>
+                <span class="t-body-strong">${esc(s.name)} <span class="muted t-body">— ${s.role}, ${s.dist} m</span>${fieldAppBadge(s.id)}</span>
                 <span class="t-caption staff-opt__status"><span class="status-dot status-dot--${s.status === 'available' ? 'ok' : 'warn'}" aria-hidden="true"></span>${s.status === 'available' ? 'Available' : '<em>On task</em>'} · ETA ~${eta(s.dist)} min</span>
               </span>
             </label>`).join('')}
@@ -73,12 +74,15 @@ export function openDispatch(alert, { at = null, onDone } = {}) {
     setTimeout(() => {
       const prev = alert ? { state: alert.state, assignee: alert.assignee, severity: alert.severity } : null;
       const sPrev = { status: s.status, task: s.task };
+      const priority = $('[data-priority]', m.el).value;
+      const instruction = $('[data-instruction]', m.el).value.trim();
       if (alert) {
         alert.state = 'dispatched'; alert.assignee = s.name;
-        alert.severity = $('[data-priority]', m.el).value;
+        alert.severity = priority; alert.progress = 'awaiting response';
       }
       s.status = 'on-task'; s.task = alert ? alert.title : 'Ad-hoc dispatch';
       touch('alerts', 'staff');
+      hooks.dispatch?.(alert, s, { priority, instruction, at: loc });
       m.close('done');
       chime('success');
       const dist = toMetres(loc, s.pos);
@@ -86,7 +90,7 @@ export function openDispatch(alert, { at = null, onDone } = {}) {
         type: 'success',
         title: alert ? `Staff dispatched to Zone ${alert.zone}` : 'Staff dispatched',
         desc: `${s.name} en route — ETA ${Math.max(1, Math.round(dist / 75))} min`,
-        action: { label: 'Recall', run: () => { if (alert) Object.assign(alert, prev); Object.assign(s, sPrev); touch('alerts', 'staff'); toast({ type: 'info', title: 'Dispatch recalled', desc: `${s.name} is available again.` }); } },
+        action: { label: 'Recall', run: () => { if (alert) Object.assign(alert, prev, { progress: null }); Object.assign(s, sPrev); touch('alerts', 'staff'); hooks.recall?.(alert); toast({ type: 'info', title: 'Dispatch recalled', desc: `${s.name} is available again.` }); } },
         life: 30000,
       });
       onDone?.(s);
