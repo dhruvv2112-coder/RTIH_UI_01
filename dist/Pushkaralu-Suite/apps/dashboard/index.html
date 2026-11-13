@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pushkaralu Command · Godavari Pushkaralu 2027 Surveillance Dashboard</title>
+  <meta name="description" content="Integrated command-centre dashboard for Godavari Pushkaralu 2027, Rajamahendravaram: CCTV, radar-only privacy zones, GIS, alerts, dispatch and emergency protocol." />
+  <meta name="theme-color" content="#1E3A5F" />
+  <link rel="icon" href="public/favicon.svg" type="image/svg+xml" />
+  <link rel="manifest" href="public/manifest.webmanifest" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
+  <link rel="stylesheet" href="src/styles/tokens.css" />
+  <link rel="stylesheet" href="src/styles/base.css" />
+  <link rel="stylesheet" href="src/styles/shell.css" />
+  <link rel="stylesheet" href="src/styles/components.css" />
+  <link rel="stylesheet" href="src/styles/views.css" />
+  <link rel="stylesheet" href="src/styles/responsive.css" />
+  <script type="module" src="src/js/app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#cams">Skip to camera grid</a>
+  <a class="skip-link" href="#aq">Skip to alert queue</a>
+
+  <div class="app" id="app">
+    <header class="hdr" id="hdr" role="banner"></header>
+    <div id="em-banner" class="em-banner-wrap" hidden></div>
+
+    <main class="main" id="main">
+      <section class="stage" aria-label="Monitoring">
+        <nav class="tabs" id="tabs" role="tablist" aria-label="Dashboard mode"></nav>
+        <div class="views">
+          <div class="view view--live" id="view-live" role="tabpanel" aria-labelledby="tab-live">
+            <section class="live__cams" id="cams" aria-label="Camera grid" tabindex="-1"></section>
+            <section class="live__map" id="live-map" aria-label="GIS map"></section>
+          </div>
+          <div class="view view--map" id="view-map" role="tabpanel" aria-labelledby="tab-map" hidden>
+            <section class="full-map" id="full-map" aria-label="GIS map, full width"></section>
+          </div>
+          <div class="view view--analytics" id="view-analytics" role="tabpanel" aria-labelledby="tab-analytics" hidden></div>
+          <div class="view view--replay" id="view-replay" role="tabpanel" aria-labelledby="tab-replay" hidden></div>
+        </div>
+      </section>
+
+      <aside class="rail" id="rail" aria-label="Alerts and key indicators">
+        <div class="rail__icons" role="toolbar" aria-label="Alert summary"></div>
+        <nav class="tablet-tabs" id="tablet-tabs" role="tablist" aria-label="Panels"></nav>
+        <section class="aq" id="aq" aria-label="Alert queue" tabindex="-1"></section>
+        <section class="kpis" id="kpis" aria-label="Key indicators"></section>
+        <section class="em-panel" id="em-panel" aria-label="Emergency actions"></section>
+        <section class="tablet-map" id="tablet-map" aria-label="Map"></section>
+        <section class="tablet-cams scroll-thin" id="tablet-cams" aria-label="Camera list"></section>
+      </aside>
+    </main>
+
+    <footer class="ftr" id="ftr" role="contentinfo"></footer>
+  </div>
+
+  <div class="toasts" id="toasts" aria-live="polite" aria-relevant="additions"></div>
+  <div id="modal-root"></div>
+  <div id="sr-live" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
+
+  <div class="signout" id="signout" hidden>
+    <div class="signout__card">
+      <svg width="48" height="48" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#1E3A5F"/><path d="M16 4.5 L19 9 H13 Z M12 10 H20 L21.5 14 H10.5 Z M9.5 15 H22.5 L24 19.5 H8 Z" fill="#fff"/><path d="M5 23.5c1.5 1 3 1 4.5 0s3-1 4.5 0 3 1 4.5 0 3-1 4.5 0 3 1 4.5 0" stroke="#7DD3FC" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>
+      <h1 class="t-h1">Shift ended</h1>
+      <p class="t-body muted">You are signed out of Pushkaralu Command. Feeds are paused on this workstation. Your actions this shift are saved to the audit log.</p>
+      <button class="btn btn--primary btn--lg">Sign in again</button>
+    </div>
+  </div>
+
+  <div class="xs-redirect" role="dialog" aria-labelledby="xs-t">
+    <div class="xs-redirect__card">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
+      <h1 class="t-h1" id="xs-t">Use the Staff app on phones</h1>
+      <p class="t-body">The command dashboard needs a screen at least 768 px wide. On a phone, open the Pushkaralu Staff app to see your tasks, report incidents and send SOS.</p>
+      <a class="btn btn--primary btn--lg" id="staffAppLink" href="https://rtih-ui-02.vercel.app/">Open Staff app</a>
+      <p class="t-caption">Tablet or laptop? Rotate the device or widen the window.</p>
+    </div>
+  </div>
+</body>
+</html>

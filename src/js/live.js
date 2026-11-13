@@ -27,6 +27,7 @@ export async function startLive(actions) {
     if (!h.ok || h.data?.name !== 'godavari-hub') return;
   } catch { return; }
   document.documentElement.dataset.hub = 'live';
+  document.getElementById('staffAppLink')?.setAttribute('href', '/field/');
 
   // The marshal carrying the Field app appears in every dispatch list.
   if (!state.staff.some((s) => isField(s.name))) {

@@ -1,0 +1,150 @@
+/* ==========================================================================
+   Godavari Field — Design Tokens
+   Source of truth: docs/brief/UI_BRIEF.md §2 (mirrored in tokens/tokens.json)
+   ========================================================================== */
+
+/* Base values = dark palette; the light block overrides them.
+   Light (day) is the DEFAULT theme: <html data-theme="light"> + store default. Dark is the user toggle. */
+:root,
+[data-theme="dark"] {
+  /* 2.1 Colour — Dark (default) */
+  --color-bg-primary: #0D1117;
+  --color-bg-secondary: #161B22;
+  --color-bg-tertiary: #21262D;
+  --color-bg-elevated: #1C2128;
+  --color-text-primary: #F0F6FC;
+  --color-text-secondary: #8B949E;
+  --color-text-tertiary: #6E7681;
+  --color-text-inverse: #0D1117;
+  --color-brand-primary: #1F6FEB;
+  --color-brand-secondary: #388BFD;
+  --color-status-normal: #3FB950;
+  --color-status-warning: #D29922;
+  --color-status-critical: #F85149;
+  --color-status-info: #58A6FF;
+  --color-status-radar: #A371F7;
+  /* Status colours used as TEXT/ICON (same as fills in dark) */
+  --color-status-normal-fg: #3FB950;
+  --color-status-warning-fg: #D29922;
+  --color-status-critical-fg: #F85149;
+  --color-status-info-fg: #58A6FF;
+  --color-surface-task-urgent: #2D1B1B;
+  --color-surface-task-active: #1B2D1E;
+  --color-surface-task-pending: #2D2B1B;
+  --color-border-default: #30363D;
+  --color-border-focus: #1F6FEB;
+  --color-overlay-scrim: rgba(0, 0, 0, 0.6);
+  --color-on-status: #FFFFFF;
+
+  /* Map canvas (dark) */
+  --map-land: #121821;
+  --map-land-2: #161E29;
+  --map-water: #0E2A3D;
+  --map-water-edge: #164462;
+  --map-road: #263040;
+  --map-road-major: #2F3B4E;
+  --map-label: #6E7681;
+
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-bottom-sheet: 0 -4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-fab: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-toast: 0 4px 16px rgba(0, 0, 0, 0.5);
+  --shadow-focus: 0 0 0 3px rgba(31, 111, 235, 0.35);
+
+  color-scheme: dark;
+}
+
+[data-theme="light"] {
+  --color-bg-primary: #FFFFFF;
+  --color-bg-secondary: #F6F8FA;
+  --color-bg-tertiary: #EAEEF2;
+  --color-bg-elevated: #FFFFFF;
+  --color-text-primary: #1F2328;
+  --color-text-secondary: #656D76;
+  --color-text-tertiary: #6E7781;
+  --color-text-inverse: #FFFFFF;
+  --color-border-default: #D0D7DE;
+  --color-brand-secondary: #0969DA;
+  /* Darker status tones for text/icons on white — fills keep the brief's hex values */
+  --color-status-normal-fg: #1A7F37;
+  --color-status-warning-fg: #9A6700;
+  --color-status-critical-fg: #CF222E;
+  --color-status-info-fg: #0969DA;
+  --color-surface-task-urgent: #FFEBE9;
+  --color-surface-task-active: #DAFBE1;
+  --color-surface-task-pending: #FFF8C5;
+  --color-overlay-scrim: rgba(13, 17, 23, 0.45);
+
+  --map-land: #EEF2F6;
+  --map-land-2: #E4EAF0;
+  --map-water: #BFDDF2;
+  --map-water-edge: #8CC0E4;
+  --map-road: #FFFFFF;
+  --map-road-major: #D9DFE6;
+  --map-label: #57606A;
+
+  --shadow-card: 0 1px 3px rgba(31, 35, 40, 0.12), 0 2px 8px rgba(31, 35, 40, 0.06);
+  --shadow-bottom-sheet: 0 -4px 16px rgba(31, 35, 40, 0.16);
+  --shadow-fab: 0 4px 12px rgba(31, 35, 40, 0.2);
+  --shadow-toast: 0 4px 16px rgba(31, 35, 40, 0.25);
+
+  color-scheme: light;
+}
+
+:root {
+  /* 2.2 Typography */
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+  --font-regional: 'Noto Sans Telugu', 'Noto Sans Devanagari', var(--font-sans);
+
+  /* 2.3 Spacing (4px base) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  /* 2.5 Radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-full: 9999px;
+
+  /* 2.6 Motion */
+  --ease-default: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --duration-instant: 100ms;
+  --duration-fast: 200ms;
+  --duration-normal: 300ms;
+  --duration-slow: 500ms;
+
+  /* 2.8 Z layers */
+  --z-base: 0;
+  --z-header: 4;
+  --z-fab: 6;
+  --z-tabbar: 8;
+  --z-sheet: 12;
+  --z-toast: 16;
+  --z-modal: 20;
+  --z-emergency: 24;
+
+  /* Shell metrics (§3) */
+  --header-h: 56px;
+  --tabbar-h: 64px;
+  --offline-h: 36px;
+  --touch-min: 48px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-instant: 0ms;
+    --duration-fast: 0ms;
+    --duration-normal: 0ms;
+    --duration-slow: 0ms;
+  }
+}

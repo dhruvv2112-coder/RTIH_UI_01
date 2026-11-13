@@ -1,0 +1,10 @@
+{
+  "name": "Pushkaralu 2027 — Pilgrim App",
+  "short_name": "Pushkaralu",
+  "start_url": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FFFFFF",
+  "theme_color": "#B45309",
+  "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
+}
