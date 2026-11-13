@@ -1,5 +1,7 @@
-// Godavari Hub adapter for Pushkaralu Command. Active only when the dashboard is served by the
-// local hub (GET /api/health answers); otherwise the dashboard keeps its on-screen simulation.
+// Godavari Hub adapter for Pushkaralu Command. Connects to the hub that serves the page (local
+// laptop hub or the cloud hub site), else to the cloud hub (CLOUD_HUB) so the Vercel deployment is
+// live-linked with the Pilgrim and Field apps on any device. ?hub=off keeps the on-screen
+// simulation only; ?hub=<url> picks another hub.
 //
 //  hub → command  alert.created  (pilgrim SOS, field report, staff SOS) → alert queue + toast
 //                 alert.updated / task.updated                          → alert state, staff status
@@ -16,19 +18,36 @@ const seen = new Map();          // alert id → { state, assignee, severity }
 const sentToField = new Set();   // alert ids already dispatched to the Field app
 let actionsRef = null;
 
+export const CLOUD_HUB = 'https://godavari-hub.vercel.app';
+let BASE = '';
+
+async function findHub() {
+  const q = new URLSearchParams(location.search).get('hub');
+  if (q === 'off') return null;
+  for (const base of q ? [q.replace(/\/$/, '')] : ['', CLOUD_HUB]) {
+    const ac = new AbortController();
+    const tm = setTimeout(() => ac.abort(), 3500);
+    try {
+      const r = await fetch(`${base}/api/health`, { signal: ac.signal, cache: 'no-store' });
+      const h = await r.json();
+      if (r.ok && h?.name === 'godavari-hub') return { base, h };
+    } catch { /* try the next one */ } finally { clearTimeout(tm); }
+  }
+  return null;
+}
+
 async function api(path, body) {
-  const r = await fetch(path, body === undefined ? undefined : { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  const r = await fetch(BASE + path, body === undefined ? undefined : { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
   return { ok: r.ok, data: await r.json().catch(() => null) };
 }
 
 export async function startLive(actions) {
   actionsRef = actions;
-  try {
-    const h = await api('/api/health');
-    if (!h.ok || h.data?.name !== 'godavari-hub') return;
-  } catch { return; }
+  const hub = await findHub();
+  if (!hub) return;
+  BASE = hub.base;
   document.documentElement.dataset.hub = 'live';
-  document.getElementById('staffAppLink')?.setAttribute('href', '/field/');
+  document.getElementById('staffAppLink')?.setAttribute('href', `${BASE}/field/`);
 
   // The marshal carrying the Field app appears in every dispatch list.
   if (!state.staff.some((s) => isField(s.name))) {
@@ -53,7 +72,7 @@ export async function startLive(actions) {
     wasEmergency = z;
   });
   window.addEventListener('gc:broadcast', (e) => broadcast(e.detail));
-  toast({ type: 'info', title: 'Connected to Godavari Hub', desc: 'Live alerts from the Pilgrim and Field apps will appear in the queue.', life: 4000 });
+  toast({ type: 'info', title: hub.h.runtime === 'vercel' ? 'Connected to Godavari Hub (cloud)' : 'Connected to Godavari Hub', desc: 'Live alerts from the Pilgrim and Field apps will appear in the queue.', life: 4000 });
 }
 
 const snap = (a) => ({ state: a.state, assignee: a.assignee || null, severity: a.severity });
@@ -87,7 +106,7 @@ function upsert(a, announce = true) {
 }
 
 function connect() {
-  const es = new EventSource('/api/events?app=command&topics=alert,task,booking,sos,reset');
+  const es = new EventSource(`${BASE}/api/events?app=command&topics=alert,task,booking,sos,reset`);
   const data = (e) => JSON.parse(e.data).data;
   es.addEventListener('alert.created', (e) => { upsert(data(e)); touch('alerts'); });
   es.addEventListener('alert.updated', (e) => {
