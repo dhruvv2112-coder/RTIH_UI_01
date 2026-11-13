@@ -342,6 +342,10 @@ path.chart__line.zl-A, path.chart__line.zl-B, path.chart__line.zl-C, path.chart_
 .gis__view3d button[aria-pressed="true"] svg { animation: m3-spin 6s linear infinite; }
 @keyframes m3-spin { to { transform: rotate(360deg); } }
 .gis__map3d { position: absolute; inset: 0; z-index: 1; background: var(--color-bg-tertiary); }
+/* maplibre-gl.css (loaded later, from the CDN) sets .maplibregl-map { position: relative }, which collapsed
+   the 3D map to 0 px height. Out-specify it so the map always fills the GIS panel. */
+.gis .gis__map3d.maplibregl-map { position: absolute; inset: 0; }
+.gis .gis__map3d[hidden] { display: none; }
 .gis.is-3d .gis__svg, .gis.is-3d .gis__legend .gis__scale, .gis.is-3d .gis__popups { visibility: hidden; }
 .gis.is-3d .gis__layers, .gis.is-3d .gis__zoom, .gis.is-3d .gis__compass, .gis.is-3d .gis__legend, .gis.is-3d .gis__expand, .gis.is-3d .gis__sheet { z-index: 2; }
 .gis.is-3d .gis__layers .chip[data-layer="traffic"] { opacity: 0.45; }
