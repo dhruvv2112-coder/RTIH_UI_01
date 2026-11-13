@@ -16,6 +16,7 @@ export function openDispatch(alert, { at = null, onDone } = {}) {
   const firstAvail = staff.find((s) => s.status === 'available');
   const eta = (d) => Math.max(1, Math.round(d / 75)); // ~4.5 km/h through crowds
   const t = alert ? ALERT_TYPES[alert.type] : null;
+  const linked = document.documentElement.dataset.live === 'on';
 
   const m = openModal({
     title: 'Dispatch staff to incident',
@@ -39,7 +40,7 @@ export function openDispatch(alert, { at = null, onDone } = {}) {
               <span class="staff-opt__radio" aria-hidden="true"></span>
               <span class="avatar avatar--sm" style="--role:${ROLE_COLOURS[s.role]}">${s.name.split(' ').map((p) => p[0]).join('').slice(0, 2)}</span>
               <span class="staff-opt__main">
-                <span class="t-body-strong">${esc(s.name)} <span class="muted t-body">— ${s.role}, ${s.dist} m</span></span>
+                <span class="t-body-strong">${esc(s.name)} <span class="muted t-body">— ${s.role}, ${s.dist} m</span>${linked && s.id === 'ST-001' ? ` <span class="chip chip--app">${icon('smartphone', 12)}Field app</span>` : ''}</span>
                 <span class="t-caption staff-opt__status"><span class="status-dot status-dot--${s.status === 'available' ? 'ok' : 'warn'}" aria-hidden="true"></span>${s.status === 'available' ? 'Available' : '<em>On task</em>'} · ETA ~${eta(s.dist)} min</span>
               </span>
             </label>`).join('')}
@@ -80,13 +81,14 @@ export function openDispatch(alert, { at = null, onDone } = {}) {
       s.status = 'on-task'; s.task = alert ? alert.title : 'Ad-hoc dispatch';
       touch('alerts', 'staff');
       m.close('done');
+      document.dispatchEvent(new CustomEvent('gc:dispatched', { detail: { alert, staff: s, priority: $('[data-priority]', m.el).value, instruction: $('[data-instruction]', m.el).value.trim(), dist: toMetres(loc, s.pos), eta: Math.max(1, Math.round(toMetres(loc, s.pos) / 75)) } }));
       chime('success');
       const dist = toMetres(loc, s.pos);
       toast({
         type: 'success',
         title: alert ? `Staff dispatched to Zone ${alert.zone}` : 'Staff dispatched',
         desc: `${s.name} en route — ETA ${Math.max(1, Math.round(dist / 75))} min`,
-        action: { label: 'Recall', run: () => { if (alert) Object.assign(alert, prev); Object.assign(s, sPrev); touch('alerts', 'staff'); toast({ type: 'info', title: 'Dispatch recalled', desc: `${s.name} is available again.` }); } },
+        action: { label: 'Recall', run: () => { document.dispatchEvent(new CustomEvent('gc:recalled', { detail: { alert } })); if (alert) Object.assign(alert, prev); Object.assign(s, sPrev); touch('alerts', 'staff'); toast({ type: 'info', title: 'Dispatch recalled', desc: `${s.name} is available again.` }); } },
         life: 30000,
       });
       onDone?.(s);

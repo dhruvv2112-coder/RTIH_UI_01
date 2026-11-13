@@ -16,6 +16,7 @@ import { mountAnalytics } from './analytics.js';
 import { mountReplay } from './replay.js';
 import { toast, closeDropdown, closeTopModal, hasModal, dropdown, chime } from './ui.js';
 import { setFeedsPaused } from './camera-sim.js';
+import { startLiveLink } from './live-link.js';
 
 const VIEWS = ['live', 'replay', 'analytics', 'map'];
 const VIEW_META = {
@@ -353,3 +354,4 @@ setTimeout(() => toast({ type: 'info', title: `Day shift · ${state.user.name}`,
 
 void chime;
 window.__gc = { state, actions };
+startLiveLink();

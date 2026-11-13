@@ -155,6 +155,7 @@ export function mountAlertQueue(root, actions) {
     const prev = { state: a.state, assignee: a.assignee };
     Object.assign(a, patch);
     touch('alerts');
+    if (patch.state === 'resolved') document.dispatchEvent(new CustomEvent('gc:alert-resolved', { detail: { alert: a } }));
     toast({
       type: patch.state === 'resolved' ? 'success' : 'info',
       title: msg,

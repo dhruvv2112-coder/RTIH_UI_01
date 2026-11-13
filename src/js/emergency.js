@@ -46,6 +46,7 @@ export function activate(zone) {
   chime('emergency');
   clearInterval(alarmTimer);
   alarmTimer = setInterval(() => chime('emergency'), 60000);
+  document.dispatchEvent(new CustomEvent('gc:emergency', { detail: { zone, area: z.area } }));
   toast({ type: 'critical', title: `Emergency protocol active — ${z.name}`, desc: 'Emergency actions replace the KPI strip. Alarm repeats every 60 seconds.' });
 }
 
@@ -60,6 +61,7 @@ export async function deactivate() {
   clearInterval(alarmTimer);
   const z = state.emergency.zone;
   set({ emergency: null, zones: [] });
+  document.dispatchEvent(new CustomEvent('gc:emergency-end', { detail: { zone: z } }));
   toast({ type: 'success', title: 'Emergency protocol ended', desc: `Zone ${z} stood down. Timeline saved to the audit log.` });
 }
 

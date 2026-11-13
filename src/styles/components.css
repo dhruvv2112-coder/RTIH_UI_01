@@ -487,3 +487,6 @@ textarea.input:focus { padding: 7px 11px; }
 .em__timeline { overflow: auto; min-height: 60px; display: grid; align-content: start; gap: 2px; }
 .em__timeline li { display: grid; grid-template-columns: 64px 1fr; gap: 8px; padding: 4px 0; border-bottom: 1px dashed var(--color-border-default); font-size: 12px; }
 .em__timeline .t-mono { color: var(--color-text-secondary); }
+
+/* Live-link badge: marks the staff member whose phone runs the Field app on the suite */
+.chip--app { display: inline-flex; align-items: center; gap: 4px; margin-left: 6px; padding: 1px 6px; border-radius: 999px; font: 600 11px/16px var(--font-sans, inherit); color: var(--color-status-info, #2563EB); background: color-mix(in srgb, var(--color-status-info, #2563EB) 12%, transparent); vertical-align: 1px; }

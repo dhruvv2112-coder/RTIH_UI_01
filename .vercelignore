@@ -1,3 +1,5 @@
-docs/screenshots
+docs
 scripts
 .github
+suite
+dist

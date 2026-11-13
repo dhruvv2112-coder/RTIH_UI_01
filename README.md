@@ -77,3 +77,18 @@ one at a time. Simulated feeds live in `data.js` and `camera-sim.js`; swap them 
 - Self-host Inter and JetBrains Mono (Google Fonts is linked for the demo; system fallbacks apply offline).
 - Replace the SVG base map with Mapbox GL offline tiles; layer semantics and colours carry over unchanged.
 - Theme preference uses `sessionStorage` only; nothing is written to `localStorage`, per brief §16.
+
+## Pushkaralu Suite: all three apps on one local server
+
+`suite/` runs this dashboard, the [Field app (RTIH_UI_02)](https://github.com/dhruvv2112-coder/RTIH_UI_02) and the [Pilgrim app (RTIH_UI_03)](https://github.com/dhruvv2112-coder/RTIH_UI_03) from one zero-dependency Node server (port 8080) with a live event hub:
+
+- Pilgrim SOS → critical alert here → **Dispatch** → INCOMING DISPATCH on the field app → accept / decline / note / complete flow back here and to the pilgrim's SOS screen.
+- Field reports and staff SOS create alerts; the emergency protocol reaches both phone apps; the field app's offline mode queues events until reconnect.
+
+```bash
+# clone RTIH_UI_01, RTIH_UI_02 and RTIH_UI_03 side by side, then:
+node suite/build.mjs --rebuild     # → dist/Pushkaralu-Suite
+cd dist/Pushkaralu-Suite && node server.mjs --open   # or start.bat on Windows
+```
+
+The assembled folder needs only Node.js 18+; `start.bat` installs Node with winget if it is missing. Without the suite server (e.g. on Vercel) the live link stays off and the apps use their built-in simulations. API: `GET /api/health`, `GET /api/stream` (SSE), `GET|POST /api/events`, `POST /api/reset`.

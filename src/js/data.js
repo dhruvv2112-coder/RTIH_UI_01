@@ -166,7 +166,7 @@ export const RADAR_FLOW = PRIVACY_ZONES.map((pz) => ({
 
 /* ------------------------------------------------------------------ Staff */
 const STAFF_SEED = [
-  ['Ramesh K', 'Zone Marshal', 'A', [560, 395]],
+  ['Ramesh Kumar', 'Zone Marshal', 'A', [560, 395]],
   ['Suresh P', 'Zone Marshal', 'A', [640, 395]],
   ['Priya M', 'Supervisor', 'A', [610, 320]],
   ['Lakshmi V', 'Medical', 'A', [520, 360]],
