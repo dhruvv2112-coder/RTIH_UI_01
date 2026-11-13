@@ -99,6 +99,7 @@ export function mountAlertQueue(root, actions) {
         <span class="t-caption muted alert__thumbs-note">Nearby cameras</span></div>` : ''}
       ${privacy ? `<div class="alert__privacy">${icon('shield', 16)}<span>Bathing area — radar only. No camera covers this location.</span></div>` : ''}
       <div class="alert__minimap">${miniMap(a.location)}<button class="alert__mapbtn btn btn--ghost btn--xs" data-act="map">${icon('map-pin', 14)}Show on map</button></div>
+      ${a.photo ? `<a href="${esc(a.photo)}" target="_blank" rel="noopener" class="alert__photo" title="Open photo from the reporter"><img src="${esc(a.photo)}" alt="Photo attached to the report" loading="lazy" style="width:100%;max-height:180px;object-fit:cover;border-radius:8px;margin:6px 0"></a>` : ''}
       ${a.suggestion ? `<p class="alert__suggest">${icon('lightbulb', 16)}<em>Suggested: ${esc(a.suggestion)}</em></p>` : ''}
       <label class="alert__notes"><span class="sr-only">Notes</span>${icon('pencil', 16)}
         <input type="text" class="input input--sm" placeholder="Add a note…" value="${esc(a.notes)}" data-notes="${a.id}"/></label>
