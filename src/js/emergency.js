@@ -105,7 +105,10 @@ export function mountEmergencyPanel(root) {
       m.el.querySelector('[data-go]').addEventListener('click', () => {
         const spk = m.el.querySelector('[data-spk][aria-pressed=true]').dataset.spk;
         const langs = [...m.el.querySelectorAll('[data-lang][aria-pressed=true]')].map((x) => x.dataset.lang).join(' + ');
+        const msg = m.el.querySelector('[data-msg]').value.trim();
         m.close(); done(`PA advisory broadcast — ${spk} (${langs})`);
+        // Also pushed to the Pilgrim app when the Godavari Hub is running (see live.js).
+        window.dispatchEvent(new CustomEvent('gc:broadcast', { detail: { title: `Advisory — Zone ${state.emergency.zone}`, body: msg, zone: state.emergency.zone, level: 'warning' } }));
         toast({ type: 'success', title: 'PA advisory broadcast', desc: `${spk} · ${langs}` });
       });
     }

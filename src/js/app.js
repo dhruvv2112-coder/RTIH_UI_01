@@ -353,3 +353,8 @@ setTimeout(() => toast({ type: 'info', title: `Day shift · ${state.user.name}`,
 
 void chime;
 window.__gc = { state, actions };
+
+/* ------------------------------------------------------- Godavari Hub (local server) */
+// Live alerts from the Pilgrim & Field apps, dispatch to the Field app, broadcasts to pilgrims.
+// No-op when the dashboard is not served by the hub (e.g. on Vercel).
+import('./live.js').then((m) => m.startLive(actions)).catch(() => {});
