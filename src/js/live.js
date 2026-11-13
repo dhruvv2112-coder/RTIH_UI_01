@@ -82,6 +82,7 @@ function broadcast(msg) {
 }
 
 function upsert(a, announce = true) {
+  if (typeof a.photo === 'string' && a.photo.startsWith('/')) a.photo = BASE + a.photo; // report photo stored on the hub
   const local = state.alerts.find((x) => x.id === a.id);
   if (local) {
     Object.assign(local, { state: a.state, assignee: a.assignee, severity: a.severity, notes: a.notes });
