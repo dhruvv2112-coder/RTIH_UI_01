@@ -8,7 +8,7 @@ function savedTheme() {
 }
 
 export const state = {
-  theme: savedTheme() || (window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'),
+  theme: savedTheme() || 'light',   // day theme by default (§2.1); night is opt-in via N / user menu
   view: 'live',              // live | replay | analytics | map
   zones: [],                 // active zone chip filters ([] = all)
   preset: 1,
